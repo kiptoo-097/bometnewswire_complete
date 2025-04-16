@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Search Results</h1>
+    {% if query %}
+    <p>Showing results for: <strong>{{ query }}</strong></p>
+    {% else %}
+    <p>No search query provided.</p>
+    {% endif %}
+    {% if results %}
+    <ul class="list-group">
+        {% for result in results %}
+        <li class="list-group-item d-flex align-items-center">
+            <img src="{{ result.image.url }}" alt="{{ result.title }}" class="img-thumbnail mr-3" style="width: 50px; height: 50px; object-fit: cover;">
+            <a href="{% url 'news_detail' result.pk result.slug %}">{{ result.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No results found.</p>
+    {% endif %}
+</div>
+{% endblock %}

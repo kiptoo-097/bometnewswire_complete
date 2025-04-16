@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Bomet NewsWire{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block content %}
+
+<style>
+    .hover-zoom img {
+        transition: transform 0.3s ease;
+    }
+
+    .hover-zoom:hover img {
+        transform: scale(1.05);
+    }
+
+    .hover-text a {
+        transition: color 0.3s ease;
+        text-decoration: none;
+    }
+
+    .hover-text a:hover {
+        color: #007bff; /* Bootstrap Primary Blue */
+    }
+</style>
+
+<div class="container-fluid p-3" style="background-color: #f8f9fa;">
+    <div class="row">
+        <!-- Sidebar: Live Radio and Top News -->
+        <aside class="col-md-3">
+            <!-- Live Radio -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body text-center">
+                    <h4 class="card-title font-weight-bold text-danger d-flex align-items-center justify-content-center">
+                        <i class="fas fa-broadcast-tower text-danger mr-2"></i> BN RADIO BOMET
+                    </h4>
+                    <div class="audio-player">
+                        <audio id="radioPlayer" style="width: 100%; border-radius: 5px;">
+                            <source src="https://stream.zeno.fm/ufm2ncifwssuv" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <div class="audio-controls mt-3 d-flex justify-content-center align-items-center">
+                            <button id="playPauseBtn" class="btn btn-info btn-sm mr-2">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <i class="volume-icon fas fa-volume-up mx-2" style="font-size: 1.2rem;"></i>
+                            <input id="volumeBar" type="range" min="0" max="1" step="0.01" value="0.5" class="volume-bar" style="width: 80px;" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top News -->
+            <h3 class="mb-3 font-weight-bold">Top News</h3>
+            {% for news in latest_news|slice:":1" %}
+            <div class="card border-0 shadow-sm mb-4 hover-zoom">
+                <div class="card-body hover-text">
+                    <h4 class="card-title font-weight-bold text-dark" style="font-size: 1.4rem;">
+                        <a href="{% url 'news_detail' news.pk news.slug %}">{{ news.title }}</a>
+                    </h4>
+                </div>
+                <a href="{% url 'news_detail' news.pk news.slug %}">
+                    <div class="position-relative">
+                        <img src="{{ news.image.url }}" class="card-img-top rounded" alt="{{ news.title }}">
+                        <span class="badge badge-primary position-absolute top-0 end-0 m-2 p-2" style="font-size: 0.9rem;">{{ news.category }}</span>
+                    </div>
+                </a>
+                <div class="card-body">
+                    <p class="text-muted small">By {{ news.published_by.name }} on {{ news.date_published }}</p>
+                </div>
+            </div>
+            
+            {% endfor %}
+        </aside>
+
+        <!-- Main News -->
+        <main class="col-md-6">
+            <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    {% for news in main_news_list %}
+                    <button type="button" data-bs-target="#newsCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                        {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                        aria-label="Slide {{ forloop.counter }}"></button>
+                    {% endfor %}
+                </div>
+        
+                <div class="carousel-inner">
+                    {% for news in main_news_list %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <div class="card border-0 shadow-lg mb-4 hover-zoom">
+                            <!-- Title at the top -->
+                            <div class="card-body hover-text">
+                                <h2 class="card-title font-weight-bold text-dark" style="font-size: 1.8rem;">
+                                    <a href="{% url 'news_detail' news.pk news.slug %}" style="text-decoration: none; color: inherit;">
+                                        {{ news.title }}
+                                    </a>
+                                </h2>
+                            </div>
+        
+                            <!-- Image with badge positioned on it -->
+                            <a href="{% url 'news_detail' news.pk news.slug %}">
+                                <div class="position-relative">
+                                    <img src="{{ news.image.url }}" class="card-img-top rounded" alt="{{ news.title }}">
+                                    <span class="badge badge-danger position-absolute top-0 end-0 m-2 p-2" style="font-size: 0.9rem;">
+                                        {{ news.category }}
+                                    </span>
+                                </div>
+                            </a>
+        
+                            <!-- Meta & Snippet -->
+                            <div class="card-body">
+                                <p class="text-muted small" style="font-size: 0.85rem;">By {{ news.published_by.name }} on {{ news.date_published }}</p>
+                                <a href="{% url 'news_detail' news.pk news.slug %}" style="text-decoration: none; color: inherit;">
+                                    <p class="card-text" style="font-size: 1.1rem; font-family: 'Times New Roman', serif;">
+                                        {{ news.content|truncatechars:200 }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+        
+                <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </main>
+        
+        <!-- Trending and Latest News -->
+        <aside class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white">
+                    <ul class="nav nav-tabs card-header-tabs" id="newsTabs">
+                        <li class="nav-item">
+                            <a class="nav-link active text-dark font-weight-bold" id="trending-tab" data-toggle="tab" href="#trending" role="tab" style="font-size: 1rem;">Trending</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark font-weight-bold" id="latest-tab" data-toggle="tab" href="#latest" role="tab" style="font-size: 1rem;">Latest</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content p-3">
+                    <div class="tab-pane fade" id="latest" role="tabpanel">
+                        <ul class="list-group list-group-flush">
+                            {% for news in latest_news %}
+                            <li class="list-group-item d-flex align-items-center hover-zoom">
+                                <img src="{{ news.image.url }}" alt="{{ news.title }}" class="img-thumbnail mr-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                <a href="{% url 'news_detail' news.pk news.slug %}" class="text-primary font-weight-bold hover-text" style="font-size: 0.9rem;">{{ news.title }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="tab-pane fade show active" id="trending" role="tabpanel">
+                        <ul class="list-group list-group-flush">
+                            {% for news in trending_news %}
+                            <li class="list-group-item d-flex align-items-center hover-zoom">
+                                <img src="{{ news.image.url }}" alt="{{ news.title }}" class="img-thumbnail mr-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                <a href="{% url 'news_detail' news.pk news.slug %}" class="text-primary font-weight-bold hover-text" style="font-size: 0.9rem;">{{ news.title }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Additional News Section -->
+    <section class="mt-5">
+        <h2 class="text-center font-weight-bold mb-4" style="font-size: 1.8rem;">More News</h2>
+        <div class="row">
+            {% for news in additional_news %}
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm h-100 hover-zoom">
+    
+                    <div class="position-relative">
+                        <a href="{% url 'news_detail' news.pk news.slug %}">
+                            <img src="{{ news.image.url }}" class="card-img-top rounded" alt="{{ news.title }}">
+                        </a>
+                        {% with news.category as category %}
+                            <span class="badge position-absolute top-0 end-0 m-2 p-2 
+                                {% if category == 'Politics' %}badge-primary
+                                {% elif category == 'Sports' %}badge-success
+                                {% elif category == 'Business' %}badge-warning
+                                {% elif category == 'Entertainment' %}badge-info
+                                {% else %}badge-secondary{% endif %}" 
+                                style="font-size: 0.85rem;">
+                                {{ category }}
+                            </span>
+                        {% endwith %}
+                    </div>
+    
+                    <div class="card-body hover-text">
+                        <h4 class="card-title font-weight-bold text-dark" style="font-size: 1.4rem;">
+                            <a href="{% url 'news_detail' news.pk news.slug %}">{{ news.title }}</a>
+                        </h4>
+                        <p class="text-muted small">By {{ news.published_by.name }} on {{ news.date_published }}</p>
+                        <a href="{% url 'news_detail' news.pk news.slug %}">
+                            <p class="card-text" style="font-size: 1rem; font-family: 'Times New Roman', serif;">
+                                {{ news.content|truncatechars:100 }}
+                            </p>
+                        </a>
+                    </div>
+    
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    
+        <div class="text-center mt-4">
+            <a href="{% url 'all_news' %}" class="btn btn-primary btn-lg">See All News</a>
+        </div>
+    </section>
+    
+
+    <!-- E-Paper Section -->
+    <section class="mt-5">
+        <div class="container mt-5">
+            <h1 class="text-center mb-4 font-weight-bold">Latest E-paper</h1>
+            <div class="row">
+                {% for epaper in latest_epapers %}
+                <div class="col-md-4 hover-zoom">
+                    <div class="card mb-4">
+                        <div class="card-body hover-text">
+                            <h5 class="card-title font-weight-bold">{{ epaper.title }}</h5>
+                            <p class="card-text">Uploaded on: {{ epaper.date_uploaded }}</p>
+                            <a href="{% url 'epaper_list' %}" class="stretched-link">
+                                <div id="pdf-preview-container-{{ epaper.pk }}" style="width:100%; height:200px; overflow: hidden;">
+                                    <canvas class="pdf-preview" data-pdf-url="{{ epaper.pdf.url }}"></canvas>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

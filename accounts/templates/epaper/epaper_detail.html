@@ -1,0 +1,16 @@
+{% block content %}
+<div style="text-align: center; padding: 20px;">
+    <h1>{{ epaper.title }}</h1>
+    <p>Uploaded on: {{ epaper.date_uploaded }}</p>
+
+    <!-- View in New Tab -->
+    <a href="{{ epaper.pdf.url }}" target="_blank" class="btn btn-primary btn-lg">
+        <i class="fas fa-eye"></i> View ePaper
+    </a>
+
+    <!-- Download Button -->
+    <a href="{{ epaper.pdf.url }}" class="btn btn-success btn-lg ml-2" download>
+        <i class="fas fa-download"></i> Download ePaper
+    </a>
+</div>
+{% endblock %}

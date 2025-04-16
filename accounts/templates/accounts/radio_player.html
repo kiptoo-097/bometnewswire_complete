@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Radio</title>
+</head>
+<body>
+    <audio id="radioPlayer" autoplay loop>
+        <source src="https://stream.zeno.fm/ufm2ncifwssuv" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <script>
+        // Listen for play/pause messages from the parent page
+        window.addEventListener('message', (event) => {
+            const audio = document.getElementById('radioPlayer');
+            if (event.data === 'playRadio') {
+                audio.play();
+            } else if (event.data === 'pauseRadio') {
+                audio.pause();
+            }
+        });
+    </script>
+</body>
+</html>

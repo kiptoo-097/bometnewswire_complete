@@ -1,0 +1,326 @@
+/* Color Variables */
+:root {
+    --primary-color: #800000; /* Maroon */
+    --secondary-color: #FFFFFF; /* White */
+    --hover-color: #FFD700; /* Gold hover (optional) */
+    --text-dark: #333333; /* Dark gray */
+    --background-light: #F4F4F9; /* Light background */
+    --navbar-border-color: #E0E0E0;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* Navbar Styling */
+.navbar {
+    font-family: 'Merriweather', serif;
+    background-color: var(--secondary-color);
+    border-bottom: 1px solid var(--navbar-border-color);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.navbar-brand img {
+    max-height: 60px;
+}
+
+/* Updated Nav Links with spacing */
+.navbar-nav .nav-link {
+    color: var(--primary-color); /* Maroon text */
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 20px; /* More spacing around each link */
+    margin: 0 10px;      /* Space between links */
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    background-color: var(--primary-color); /* Maroon background */
+    color: var(--secondary-color);          /* White text */
+    text-decoration: none;
+}
+
+/* Search Styling */
+input.form-control.rounded-pill {
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 1rem;
+}
+
+.btn-outline-dark {
+    color: #333;
+    border-color: #333;
+}
+
+.btn-outline-dark:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+/* Toggler */
+.navbar-toggler {
+    border: 1px solid var(--text-dark);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23333333' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Footer Styling - Updated */
+footer {
+    background-color: var(--primary-color); /* Maroon background */
+    color: var(--secondary-color);          /* White text */
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 0;                        /* Slightly more padding */
+    border-top: 1px solid var(--navbar-border-color);
+    margin-top: auto;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.5rem;
+    }
+    .navbar-nav {
+        text-align: center;
+    }
+    .navbar-nav .nav-item {
+        border-bottom: 1px solid var(--navbar-border-color);
+    }
+}
+
+
+/* Responsive layout for Bootstrap cards */
+.card {
+    margin-bottom: 20px;
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease; /* Add hover effect */
+    object-fit: cover; /* Ensure the images fit the card without rounded corners */
+    border-radius: 0 !important; /* Remove rounded corners */
+}
+
+.card img:hover {
+    transform: scale(1.05); /* Hover effect */
+}
+
+.card-body {
+    padding: 10px;
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.card-title a, .card-text {
+    color: var(--text-dark); /* Darker color similar to main news title */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.card-title a:hover, .card-text:hover {
+    color: #007bff; /* Hover effect for titles and texts */
+    font-weight: bold;
+}
+
+.badge {
+    position: absolute; /* Positioning badge over the image */
+    top: 10px; /* Top position */
+    right: 10px; /* Right position */
+    font-size: 0.9rem;
+    border-radius: 10px;
+    color: white; /* Text color */
+}
+
+/* Custom badge colors based on category */
+.badge-category {
+    background-color: #007bff; /* Default */
+}
+
+.badge-category.Politics {
+    background-color: var(--secondary-color); /* Secondary */
+}
+
+.badge-category.National {
+    background-color: var(--danger-color); /* Danger */
+}
+
+.badge-category.Business {
+    background-color: var(--warning-color); /* Warning */
+}
+
+.badge-category.Sports {
+    background-color: var(--success-color); /* Success */
+}
+
+.badge-category.Lifestyle {
+    background-color: var(--info-color); /* Info */
+}
+
+.main-news-title {
+    font-family: 'Merriweather', serif;
+    font-size: 1.5em;
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+.additional-news-title {
+    font-size: 1em; /* Reduced text size */
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+.bold-title {
+    font-weight: bold;
+}
+
+.carousel-caption {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Spacing adjustments */
+.col-md-3.pr-3 {
+    padding-right: 15px; /* Space between left news and main news item */
+}
+
+.col-md-6.pl-3 {
+    padding-left: 15px; /* Space between left news and main news item */
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .row > [class*='col-'] {
+        margin-bottom: 20px;
+    }
+}
+
+/* Additional CSS for article detail page */
+.article-detail {
+    padding: 20px;
+}
+
+.article-detail .article-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Ensure footer is pushed to bottom */
+
+
+.card-title {
+    font-size: 1.1rem;
+}
+
+audio {
+    width: 100%;
+    outline: none;
+}
+
+/* Styles for the avatar and social icons */
+img.rounded-circle {
+    border-radius: 50%;
+}
+
+a.text-dark {
+    color: #333;
+}
+
+a.text-dark:hover {
+    color: var(--primary-color); /* Primary color */
+}
+
+/* News Tabs and Lists */
+.card-header-tabs .nav-link {
+    font-weight: bold; /* Makes the "Trending" and "Latest" tabs bold */
+}
+
+.small-text-list .list-group-item {
+    font-size: 0.9rem; /* Reduces font size for list items */
+    line-height: 1.4;  /* Improves spacing for smaller text */
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+}
+
+.card-title a:hover {
+    text-decoration: underline;
+}
+.breaking-news {
+    background-color: #800000;
+    color: #fff;
+}
+.breaking-news a {
+    text-decoration: none;
+}
+.breaking-news a:hover {
+    text-decoration: underline;
+}
+/* Add this to your CSS file or within a <style> tag */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.news-item {
+    opacity: 0; /* Start with opacity 0 */
+    animation: fadeIn 1.5s ease-in forwards; /* Fade in animation */
+    display: none; /* Hide all news items initially */
+}
+
+.news-item.active {
+    display: block; /* Show the active news item */
+    opacity: 1;
+}
+
+.news-item.fade-out {
+    animation: fadeOut 1.5s ease-out forwards; /* Fade out animation */
+}
+
+/* Add this to your CSS file or within a <style> tag */
+.carousel-item {
+    transition: transform 1.5s ease-in-out; /* Smooth transition */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%; /* Adjust the size of the navigation buttons */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Add a background to the icons */
+    border-radius: 50%; /* Make the icons circular */
+    padding: 10px; /* Add padding to the icons */
+}

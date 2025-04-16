@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ article.title }} | Bomet Newswire{% endblock %}
+
+{% block meta_description %}
+{{ article.content|truncatechars:160 }}
+{% endblock %}
+
+{% block meta_keywords %}
+{{ article.category }}, Bomet News, {{ article.published_by.name }}, Kenya News
+{% endblock %}
+
+{% block og_meta %}
+<!-- Open Graph Meta for Facebook & WhatsApp -->
+<meta property="og:title" content="{{ article.title }}" />
+<meta property="og:description" content="{{ article.summary|default:article.content|truncatewords:30 }}" />
+
+{% if article.og_image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.og_image.url }}" />
+{% elif article.image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.image.url }}" />
+{% endif %}
+
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Bomet Newswire" />
+<meta property="article:author" content="{{ article.published_by.name }}" />
+<meta property="article:published_time" content="{{ article.date_published|date:'c' }}" />
+
+<!-- Twitter Card Meta -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{{ article.title }}" />
+<meta name="twitter:description" content="{{ article.summary|default:article.content|truncatewords:30 }}" />
+{% if article.og_image %}
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.og_image.url }}" />
+{% elif article.image %}
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ article.image.url }}" />
+{% endif %}
+<meta name="twitter:site" content="@BometNewswire" />
+{% endblock %}
+
+{% block content %}
+<!-- Rich Snippet JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "{{ article.title }}",
+  "image": ["{{ article.image.url|default_if_none:'' }}"],
+  "datePublished": "{{ article.date_published|date:'Y-m-d' }}",
+  "dateModified": "{{ article.date_published|date:'Y-m-d' }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ article.published_by.name }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Bomet Newswire",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{% static 'images/bnm.png' %}"
+    }
+  },
+  "description": "{{ article.content|truncatechars:200 }}"
+}
+</script>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-9 col-md-12">
+            <h1 class="font-weight-bold text-wrap" style="font-size: 2.5rem; color: #333;">{{ article.title }}</h1>
+
+
+            <img src="{{ article.image.url }}" class="img-fluid mb-3" alt="{{ article.title }}"
+                 style="width: 100%; max-width: 1200px; height: auto; max-height: 450px; object-fit: cover;">
+            {% if article.caption %}
+            <p class="text-muted"><small>{{ article.caption }}</small></p>
+            {% endif %}
+            <div class="d-flex align-items-center mb-3">
+                <img src="{{ article.published_by.avatar.url }}" alt="Author Avatar" class="rounded-circle mr-3" width="50" height="50">
+                <div>
+                    <p class="mb-0">By <strong>{{ article.published_by.name }}</strong></p>
+                    <p class="mb-0 text-muted"><small>Published on {{ article.date_published|date:"F j, Y" }}</small></p>
+                </div>
+            </div>
+            <!-- Social Sharing and Views Count -->
+            <div class="d-flex justify-content-between align-items-center mt-3 mb-4">
+                <!-- Social Sharing -->
+                <div>
+                    <h5>Share this article:</h5>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-primary btn-sm"><i class="fab fa-facebook-f"></i> </a>
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ article.title }}" target="_blank" class="btn btn-info btn-sm"><i class="fab fa-x-twitter"></i> </a>
+                    <a href="https://api.whatsapp.com/send?text={{ request.build_absolute_uri }}" target="_blank" class="btn btn-success btn-sm"><i class="fab fa-whatsapp"></i> </a>
+                </div>
+            
+                <!-- Views Count -->
+                <style>
+                    .views-count {
+                        color: #ff5722; /* Orange color */
+                    }
+                </style>
+                
+                <!-- Views Count -->
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-eye views-count mr-2"></i> <!-- Custom color -->
+                    <p class="mb-0 views-count"><small>{{ article.views }} Views</small></p> <!-- Custom color -->
+                </div>
+            </div>
+            <!-- Article Content -->
+            <div>
+                {% for chunk in article.content.splitlines %}
+                    {% if '{image_placeholder_' in chunk %}
+                        {% for img in article.additional_images.all %}
+                            {% if chunk == '{'|add:img.placeholder|add:'}' %}
+                                <div class="additional-image">
+                                    <img src="{{ img.image.url }}" class="img-fluid my-3" alt="{{ img.caption }}" style="max-height: 450px;">
+                                    {% if img.caption %}
+                                    <p class="text-muted"><small>{{ img.caption }}</small></p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <p>{{ chunk|linebreaksbr }}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+
+            <!-- Arrow and Caption -->
+            <div class="text-center my-5">
+                <i class="fas fa-arrow-down fa-2x text-primary"></i>
+                <p class="mt-2 text-muted">Comments Below</p>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="col-lg-3 col-md-12">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white">
+                    <ul class="nav nav-tabs card-header-tabs" id="newsTabs">
+                        <li class="nav-item"><a class="nav-link active text-dark font-weight-bold" id="trending-tab" data-toggle="tab" href="#trending">Trending</a></li>
+                        <li class="nav-item"><a class="nav-link text-dark font-weight-bold" id="latest-tab" data-toggle="tab" href="#latest">Latest</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content p-3">
+                    <div class="tab-pane fade show active" id="trending">
+                        <ul class="list-group list-group-flush">
+                            {% for news in trending_news %}
+                            <li class="list-group-item d-flex align-items-center">
+                                <img src="{{ news.image.url }}" class="img-thumbnail mr-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                <a href="{% url 'news_detail' news.pk news.slug %}" class="text-primary font-weight-bold" style="font-size: 0.9rem;">{{ news.title }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="latest">
+                        <ul class="list-group list-group-flush">
+                            {% for news in latest_news %}
+                            <li class="list-group-item d-flex align-items-center">
+                                <img src="{{ news.image.url }}" class="img-thumbnail mr-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                <a href="{% url 'news_detail' news.pk news.slug %}" class="text-primary font-weight-bold" style="font-size: 0.9rem;">{{ news.title }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="row">
+        <div class="col-lg-9 col-md-12">
+            <hr>
+            <h4 class="mt-5 mb-4 border-bottom pb-2">Comments ({{ comments.count }})</h4>
+
+            <!-- Add New Comment -->
+            {% if user.is_authenticated %}
+            <div class="mb-5">
+                <h5>Add a Comment</h5>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <textarea name="content" class="form-control form-control-sm mb-2" rows="3" placeholder="Write your comment..." style="resize: none;"></textarea>
+                    <button type="submit" class="btn btn-success">Post Comment</button>
+                </form>
+            </div>
+            {% else %}
+            <p class="mb-4"><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a> to comment.</p>
+            {% endif %}
+
+            <!-- List of Comments -->
+            <div class="list-group">
+                {% for comment in comments %}
+                <div class="list-group-item bg-white border shadow-sm rounded mb-3">
+                    <div class="media">
+                        {% if comment.user.avatar %}
+                            <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle mr-3" width="50" height="50">
+                        {% else %}
+                            <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white mr-3" style="width:50px; height:50px;">
+                                <i class="fas fa-user"></i>
+                            </div>
+                        {% endif %}
+                        <div class="media-body">
+                            <h6 class="mt-0 mb-1">{{ comment.user.username }} 
+                                <small class="text-muted ml-2">{{ comment.timestamp|naturaltime }}</small>
+                            </h6>
+                            <p class="small">{{ comment.content }}</p>
+
+                            <!-- Replies -->
+                            {% for reply in comment.replies.all %}
+                                <div class="media mt-3 pl-4 border-left border-primary">
+                                    {% if reply.user.avatar %}
+                                        <img src="{{ reply.user.avatar.url }}" alt="{{ reply.user.username }}" class="rounded-circle mr-3" width="40" height="40">
+                                    {% else %}
+                                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-secondary text-white mr-3" style="width:40px; height:40px;">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1">{{ reply.user.username }} 
+                                            <small class="text-muted ml-2">{{ reply.timestamp|naturaltime }}</small>
+                                        </h6>
+                                        <p class="small">{{ reply.content }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+
+                            <!-- Reply Form -->
+                            {% if user.is_authenticated %}
+                            <form method="post" action="" class="mt-3">
+                                {% csrf_token %}
+                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                <textarea name="content" class="form-control form-control-sm mb-2" rows="2" placeholder="Write a reply..." style="resize: none;"></textarea>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Reply</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
