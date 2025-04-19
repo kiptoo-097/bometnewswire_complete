@@ -67,6 +67,7 @@ class NewsArticle(models.Model):
     image = models.ImageField(upload_to='news_images/')
     caption = models.CharField(max_length=255, null=True, blank=True)
     date_published = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)  # 🔥 This auto updates on every save
     trending = models.BooleanField(default=False)
     published_by = models.ForeignKey(Publisher, null=True, on_delete=models.CASCADE)
     breaking = models.BooleanField(default=False)

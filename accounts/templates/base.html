@@ -18,21 +18,22 @@
 
   <!-- Open Graph Meta Tags -->
   {% block og_meta %}
+  <meta property="og:image" content="" />
+  <meta property="og:image:alt" content="" />
   <meta property="og:title" content="Bomet Newswire - Kenya's Trusted News Source" />
-  <meta property="og:description" content="Get breaking news, politics, business, education, and CBC insights from Bomet County and beyond." />
-  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/bnm.png' %}" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
+  <meta property="og:description" content="Get breaking news, politics, business, education, and Insights from Bomet County and beyond." />
   <meta property="og:url" content="{{ request.build_absolute_uri }}" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Bomet Newswire" />
-  {% endblock %}
+{% endblock %}
+
+
 
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block twitter_title %}Bomet Newswire - Latest News from Bomet{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}Stay updated with Bomet's latest news, politics, sports, and lifestyle stories.{% endblock %}">
-  <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/bnm.png' %}{% endblock %}">
+  <meta name="twitter:image" content="{% block twitter_image %}{% endblock %}">
 
   <!-- CSS and Fonts -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -47,7 +48,7 @@
     <!-- Breaking News Ticker -->
     {% if breaking_news %}
 <div class="bg-danger text-white py-2 px-3 font-weight-bold text-center">
-    <span>BREAKING NEWS:</span>
+    <span>BREAKING NEWS.:</span>
     <marquee behavior="scroll" direction="left" scrollamount="6">
         {% for news in breaking_news %}
             <span class="mr-5">
